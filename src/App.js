@@ -86,12 +86,14 @@ class App extends Component {
 					<div className="pure-u-1-12"></div>
 					<div className="pure-u-10-12">
 						<div className="pure-g">
-							<div className="pure-u-1-4">
-								<SideBar titles={titles} onClick={this.handleSideBarClick.bind(this)}/>
-							</div>
-							<div className="pure-u-3-4">
-								<Topic topic={currentTopic} />
-							</div>
+							<main id="main-doc">
+								<div className="pure-u-1-4">
+									<SideBar titles={titles} onClick={this.handleSideBarClick.bind(this)}/>
+								</div>
+								<div className="pure-u-3-4">
+									<Topic topic={currentTopic} />
+								</div>
+							</main>
 						</div>
 					</div>
 					<div className="pure-u-1-12"></div>
@@ -115,12 +117,12 @@ class SideBar extends Component {
 			<SideBarItem key={`title${i}`} title={title} onClick={this.handleClickFactory(i)}/>
 		);
 		return (
-			<div className="pure-menu custom-restricted-width">
-				<span className="pure-menu-heading">Topics</span>
+			<nav id="navbar" className="pure-menu custom-restricted-width">
+				<header className="pure-menu-heading">Topics</header>
 				<ul className="pure-menu-list">
 					{items}
 				</ul>
-			</div>
+			</nav>
 		)
 	}
 }
@@ -131,7 +133,7 @@ class SideBarItem extends Component {
 		const maxTLength = 20;
 		return (
 			<li className="pure-menu-item">
-				<a className="pure-menu-link" onClick={this.props.onClick}>
+				<a className="pure-menu-link nav-link" onClick={this.props.onClick}>
 					{ title.length > maxTLength ? `${title.substr(0, maxTLength-2)}...` : title}
 				</a>
 			</li>
@@ -148,10 +150,10 @@ class Topic extends Component {
 				<h1>{topic.title.replace('.', '')}</h1>
 				<p>{topic.intro}</p>
 				{ topic.paragraphs.map( (paragraph, i) => (
-					<div key={`p${i}`}>
-						<h2>{paragraph.subtitle}</h2>
+					<section className="main-section" id={paragraph.subtitle.replace(" ", "_")} key={`p${i}`}>
+						<header>{paragraph.subtitle}</header>
 						<p>{paragraph.text}</p>
-					</div>
+					</section>
 				) )}
 			</div>
 		)
