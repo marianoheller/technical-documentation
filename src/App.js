@@ -97,6 +97,7 @@ class App extends Component {
 	}
 }
 
+
 class SideBar extends Component {
 
 	constructor(props) {
@@ -172,6 +173,8 @@ class Section extends Component {
 		)
 	}
 }
+
+//https://flatuicolors.com/
 
 
 function randomIntBetween ( max, min ) {
