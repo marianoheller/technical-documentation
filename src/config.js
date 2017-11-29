@@ -8,6 +8,10 @@ export default {
         bulletpoints: {
             max: 4,
             min: 2
+        },
+        code: {
+            max: 2,
+            min: 1
         }
     }
 }

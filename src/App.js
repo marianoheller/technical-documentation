@@ -39,7 +39,7 @@ class App extends Component {
 	}
 
 	generateDocs() {
-		const { paragraphs, bulletpoints } = config.section;
+		const { paragraphs, bulletpoints, code } = config.section;
 		return (new Array(config.cantSections)).fill(0).map( () => ({
 			title: loremIpsum({
 				count: 1, 
@@ -65,27 +65,45 @@ class App extends Component {
 					sentenceUpperBound: 5,
 					format: 'plain'
 				})
+			})),
+			code: (new Array(randomIntBetween(code.max, code.min))).fill(0).map( () => ({
+				text: loremIpsum({
+					count: 1, 
+					units: 'sentence',
+					sentenceLowerBound: 3,
+					sentenceUpperBound: 5,
+					format: 'plain'
+				})
 			}))
 		}))
+	}
+
+	handleScroll() {
+		console.log("SCROLLLLL");
 	}
 
 	render() {
 		const { sections } = this.state;
 		const titles = sections.map( (section) => section.title );
 		return (
-			<div className="App">
-				<div className="pure-g">
+			<div className="App" onScroll={this.handleScroll.bind(this)}>
+				<div className="pure-g" >
 					<div className="pure-u-1-12"></div>
 					<div className="pure-u-10-12">
 						<div className="pure-g">
-							<main id="main-doc">
-								<div className="pure-u-1-4">
+							<main id="main-doc"  >
+								<div className="pure-u-1-8">
 									<SideBar titles={titles}/>
 								</div>
-								<div className="pure-u-3-4">
+								<div className="pure-u-7-8">
 									{ sections.map( (section, i) => 
 										<Section section={section} key={`section${i}`} index={i}/>
 									) }
+								</div>
+								<div id="footer">
+									<div className="pure-u-1">
+										<p>by <a id="github-link" href="https://github.com/marianoheller">Mariano Heller</a></p>
+									</div>
 								</div>
 							</main>
 						</div>
@@ -152,29 +170,58 @@ class SideBarItem extends Component {
 
 
 class Section extends Component {
+
+	/**
+	 * First element always a paragraph.
+	 * Then shuffle the rest.
+	 * @param {Array} paragraphs 
+	 * @param {Element} bulletpoint 
+	 * @param {Array} code 
+	 */
+	shuffleContent( paragraphs, bulletpoints, code ) {
+		const shuffle = (a) => {
+			for (let i = a.length - 1; i > 0; i--) {
+				const j = Math.floor(Math.random() * (i + 1));
+				[a[i], a[j]] = [a[j], a[i]];
+			}
+			return a;
+		}
+		const content = [paragraphs.shift()];
+		content.push( ...shuffle([...paragraphs, bulletpoints, ...code]))
+		return content;
+	}
+
 	render() {
 		const { section, index } = this.props;
+		const paragraphs = section.paragraphs.map( (paragraph, i) => (
+			<div key={`sectionContent${i}`}>
+				<p>{paragraph.text}</p>
+			</div>
+		) );
+		const bulletpoints = <ul>
+			{ section.bulletpoints.map( (bulletpoint, i) => (
+				<li key={`${section.title.replace(" ", "_")}${i}`}>
+					{bulletpoint.text}
+				</li>
+			) )}
+		</ul>
+		const code = section.code.map( (code, i) => (
+			<code key={`sectionCode${i}`}>
+				<p>{code.text}</p>
+			</code>
+		) );
+
+
 		return (
 			<section className="main-section" id={section.title.replace('.', '').replace(" ", "_")} key={`p${index}`}>
 				<header><h1>{section.title.replace('.', '')}</h1></header>
-				{ section.paragraphs.map( (paragraph, i) => (
-					<div key={`sectionContent${i}`}>
-						<p>{paragraph.text}</p>
-					</div>
-				) )}
-				<ul>
-					{ section.bulletpoints.map( (bulletpoint, i) => (
-						<li key={`${section.title.replace(" ", "_")}${i}`}>
-							{bulletpoint.text}
-						</li>
-					) )}
-				</ul>
+				{ this.shuffleContent( paragraphs, bulletpoints, code) }
 			</section>
 		)
 	}
 }
 
-//https://flatuicolors.com/
+
 
 
 function randomIntBetween ( max, min ) {

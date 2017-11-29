@@ -1,3 +1,16 @@
+
+#fcc_foldout_toggler > .fcc_hamburger{
+    background-color: white !important;
+}
+
+#hamburger_top.transform_top {
+    background-color: black !important;
+}
+
+#hamburger_bottom.transform_bottom {
+    background-color: black !important;
+}
+
 .custom-restricted-width {
     /* To limit the menu width to the content of the menu: */
     display: inline-block;
@@ -8,4 +21,51 @@
 
 #navbar {
     position: fixed;
+    height: 100%;
+    background-color: #34495e;
+}
+
+
+#main-doc {
+    background-color: #2c3e50;
+    color: white;
+}
+
+.pure-menu-heading {
+    margin-top: 2rem;
+    font-weight: bold;
+    color: white;
+}
+
+.nav-link {
+    color: white;
+}
+
+.pure-menu-selected {
+    color: white !important;
+    background-color: #2c3e50;
+}
+
+.pure-menu-link {
+    color: white !important;
+}
+
+
+.pure-menu-item:hover > a   {
+    color: black !important;
+}
+
+code > p {
+    padding: 1rem;
+    background-color: #34495e;
+}
+
+
+#footer > div > p {
+    color: white;
+    text-align: center;
+}
+#github-link {
+    text-decoration: none;
+    color: white;
 }
