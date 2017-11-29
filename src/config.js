@@ -6,7 +6,7 @@ export default {
             min: 2
         },
         bulletpoints: {
-            max: 3,
+            max: 4,
             min: 2
         }
     }

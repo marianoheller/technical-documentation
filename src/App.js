@@ -39,6 +39,7 @@ class App extends Component {
 	}
 
 	generateDocs() {
+		const { paragraphs, bulletpoints } = config.section;
 		return (new Array(config.cantSections)).fill(0).map( () => ({
 			title: loremIpsum({
 				count: 1, 
@@ -47,7 +48,7 @@ class App extends Component {
 				sentenceUpperBound: 2,
 				format: 'plain'
 			}),
-			paragraphs: (new Array(config.section.paragraphs.max)).fill(0).map( () => ({
+			paragraphs: (new Array( randomIntBetween( paragraphs.max, paragraphs.min))).fill(0).map( () => ({
 				text: loremIpsum({
 					count: 1, 
 					units: 'paragraphs',
@@ -56,7 +57,7 @@ class App extends Component {
 					format: 'plain'
 				})
 			})),
-			bulletpoints: (new Array(config.section.bulletpoints.max)).fill(0).map( () => ({
+			bulletpoints: (new Array(randomIntBetween(bulletpoints.max, bulletpoints.min))).fill(0).map( () => ({
 				text: loremIpsum({
 					count: 1, 
 					units: 'sentence',
@@ -66,12 +67,6 @@ class App extends Component {
 				})
 			}))
 		}))
-	}
-
-	handleSideBarClick(topicIndex) {
-		this.setState({
-			currentTopicIndex: topicIndex
-		})
 	}
 
 	render() {
@@ -85,7 +80,7 @@ class App extends Component {
 						<div className="pure-g">
 							<main id="main-doc">
 								<div className="pure-u-1-4">
-									<SideBar titles={titles} onClick={this.handleSideBarClick.bind(this)}/>
+									<SideBar titles={titles}/>
 								</div>
 								<div className="pure-u-3-4">
 									{ sections.map( (section, i) => 
@@ -104,16 +99,25 @@ class App extends Component {
 
 class SideBar extends Component {
 
+	constructor(props) {
+		super(props);
+		this.state = {
+			itemSelected: 0
+		}
+	}
+
 	handleClickFactory(index) {
-		const { onClick } = this.props;
 		return () => {
-			onClick(index);
+			this.setState({
+				itemSelected: index
+			})
 		}
 	}
 
 	render() {
+		const { itemSelected } = this.state;
 		const items = this.props.titles.map( (title, i) => 
-			<SideBarItem key={`title${i}`} title={title} onClick={this.handleClickFactory(i)}/>
+			<SideBarItem key={`title${i}`} title={title} selected={i===itemSelected} onClick={this.handleClickFactory(i)}/>
 		);
 		return (
 			<nav id="navbar" className="pure-menu custom-restricted-width">
@@ -128,10 +132,11 @@ class SideBar extends Component {
 
 class SideBarItem extends Component {
 	render() {
+		const { selected } = this.props;
 		const title = this.props.title.replace('.', '');
 		const maxTLength = 20;
 		return (
-			<li className="pure-menu-item">
+			<li className={`pure-menu-item ${ selected ? "pure-menu-selected": "" }`}>
 				<a 
 				className="pure-menu-link nav-link" 
 				onClick={this.props.onClick}
@@ -168,6 +173,10 @@ class Section extends Component {
 	}
 }
 
+
+function randomIntBetween ( max, min ) {
+	return Math.round(Math.random()*(max-min)+min);
+}
 
 
 export default App;
