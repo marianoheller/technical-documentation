@@ -8,12 +8,16 @@ import './App.css';
 class App extends Component {
 	/*
 
-	topic: -> {
+	section: -> {
 		title: "",
-		intro: "",
+		id: "",
 		paragraphs: [
 			{
-				subtitle: "",
+				text: "",
+			}
+		],
+		bulletpoints: [
+			{
 				text: "",
 			}
 		]
@@ -24,19 +28,18 @@ class App extends Component {
 		super(props);
 
 		this.state = {
-			topics: [],
-			currentTopicIndex: 0,
+			sections: [],
 		}
 	}
 
 	componentWillMount() {
 		this.setState({
-			topics: this.generateDocs(),
+			sections: this.generateDocs(),
 		})
 	}
 
 	generateDocs() {
-		return (new Array(config.cantTopics)).fill(0).map( () => ({
+		return (new Array(config.cantSections)).fill(0).map( () => ({
 			title: loremIpsum({
 				count: 1, 
 				units: 'sentence',
@@ -44,26 +47,21 @@ class App extends Component {
 				sentenceUpperBound: 2,
 				format: 'plain'
 			}),
-			intro: loremIpsum({
-				count: 1, 
-				units: 'paragraphs',
-				paragraphLowerBound: 3,
-  				paragraphUpperBound: 7,
-				format: 'plain'
-			}),
-			paragraphs: (new Array(config.topic.cantParagraphs)).fill(0).map( () => ({
-				subtitle: loremIpsum({
-					count: 1, 
-					units: 'sentence',
-					sentenceLowerBound: 1,
-					sentenceUpperBound: 3,
-					format: 'plain'
-				}),
+			paragraphs: (new Array(config.section.paragraphs.max)).fill(0).map( () => ({
 				text: loremIpsum({
 					count: 1, 
 					units: 'paragraphs',
 					paragraphLowerBound: 5,
 					paragraphUpperBound: 10,
+					format: 'plain'
+				})
+			})),
+			bulletpoints: (new Array(config.section.bulletpoints.max)).fill(0).map( () => ({
+				text: loremIpsum({
+					count: 1, 
+					units: 'sentence',
+					sentenceLowerBound: 3,
+					sentenceUpperBound: 5,
 					format: 'plain'
 				})
 			}))
@@ -77,9 +75,8 @@ class App extends Component {
 	}
 
 	render() {
-		const { topics, currentTopicIndex } = this.state;
-		const titles = topics.map( (topic) => topic.title );
-		const currentTopic = topics[currentTopicIndex];
+		const { sections } = this.state;
+		const titles = sections.map( (section) => section.title );
 		return (
 			<div className="App">
 				<div className="pure-g">
@@ -91,7 +88,9 @@ class App extends Component {
 									<SideBar titles={titles} onClick={this.handleSideBarClick.bind(this)}/>
 								</div>
 								<div className="pure-u-3-4">
-									<Topic topic={currentTopic} />
+									{ sections.map( (section, i) => 
+										<Section section={section} key={`section${i}`} index={i}/>
+									) }
 								</div>
 							</main>
 						</div>
@@ -133,7 +132,11 @@ class SideBarItem extends Component {
 		const maxTLength = 20;
 		return (
 			<li className="pure-menu-item">
-				<a className="pure-menu-link nav-link" onClick={this.props.onClick}>
+				<a 
+				className="pure-menu-link nav-link" 
+				onClick={this.props.onClick}
+				href={`#${title.replace('.', '').replace(" ", "_")}`}
+				>
 					{ title.length > maxTLength ? `${title.substr(0, maxTLength-2)}...` : title}
 				</a>
 			</li>
@@ -142,20 +145,25 @@ class SideBarItem extends Component {
 }
 
 
-class Topic extends Component {
+class Section extends Component {
 	render() {
-		const { topic } = this.props;
+		const { section, index } = this.props;
 		return (
-			<div>
-				<h1>{topic.title.replace('.', '')}</h1>
-				<p>{topic.intro}</p>
-				{ topic.paragraphs.map( (paragraph, i) => (
-					<section className="main-section" id={paragraph.subtitle.replace(" ", "_")} key={`p${i}`}>
-						<header>{paragraph.subtitle}</header>
+			<section className="main-section" id={section.title.replace('.', '').replace(" ", "_")} key={`p${index}`}>
+				<header><h1>{section.title.replace('.', '')}</h1></header>
+				{ section.paragraphs.map( (paragraph, i) => (
+					<div key={`sectionContent${i}`}>
 						<p>{paragraph.text}</p>
-					</section>
+					</div>
 				) )}
-			</div>
+				<ul>
+					{ section.bulletpoints.map( (bulletpoint, i) => (
+						<li key={`${section.title.replace(" ", "_")}${i}`}>
+							{bulletpoint.text}
+						</li>
+					) )}
+				</ul>
+			</section>
 		)
 	}
 }
