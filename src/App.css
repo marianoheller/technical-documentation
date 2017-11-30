@@ -1,4 +1,9 @@
 
+.App {
+    overflow-y: auto;
+}
+
+
 #fcc_foldout_toggler > .fcc_hamburger{
     background-color: white !important;
 }

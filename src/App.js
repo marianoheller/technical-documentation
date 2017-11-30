@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import loremIpsum from 'lorem-ipsum';
+import VisibilitySensor from 'react-visibility-sensor';
 import config from './config';
 import 'purecss';
 import './App.css';
@@ -29,6 +30,7 @@ class App extends Component {
 
 		this.state = {
 			sections: [],
+			visibility: new Array(config.cantSections).fill(false),
 		}
 	}
 
@@ -37,6 +39,7 @@ class App extends Component {
 			sections: this.generateDocs(),
 		})
 	}
+
 
 	generateDocs() {
 		const { paragraphs, bulletpoints, code } = config.section;
@@ -78,26 +81,32 @@ class App extends Component {
 		}))
 	}
 
-	handleScroll() {
-		console.log("SCROLLLLL");
+	onVisChangeFactory(index) {
+		return (isVisible) => {
+			 this.setState({
+				...this.state,
+				visibility: this.state.visibility.map( (e,i) => index===i ? isVisible : e )
+			}) 
+		}
 	}
 
 	render() {
-		const { sections } = this.state;
+		const { sections, visibility } = this.state;
 		const titles = sections.map( (section) => section.title );
+		const indexVisible = visibility.findIndex( e => e );
 		return (
-			<div className="App" onScroll={this.handleScroll.bind(this)}>
+			<div className="App" >
 				<div className="pure-g" >
 					<div className="pure-u-1-12"></div>
 					<div className="pure-u-10-12">
 						<div className="pure-g">
 							<main id="main-doc"  >
 								<div className="pure-u-1-8">
-									<SideBar titles={titles}/>
+									<SideBar titles={titles} itemVisible={indexVisible}/>
 								</div>
 								<div className="pure-u-7-8">
 									{ sections.map( (section, i) => 
-										<Section section={section} key={`section${i}`} index={i}/>
+										<Section section={section} key={`section${i}`} index={i} onVisChange={this.onVisChangeFactory(i)}/>
 									) }
 								</div>
 								<div id="footer">
@@ -131,6 +140,16 @@ class SideBar extends Component {
 				itemSelected: index
 			})
 		}
+	}
+
+	componentWillReceiveProps(nextProps) {
+		const { itemVisible } = nextProps;
+		if ( itemVisible !== -1 ) {
+			this.setState({
+				itemSelected: itemVisible
+			})
+		}
+		
 	}
 
 	render() {
@@ -171,13 +190,14 @@ class SideBarItem extends Component {
 
 class Section extends Component {
 
-	/**
-	 * First element always a paragraph.
-	 * Then shuffle the rest.
-	 * @param {Array} paragraphs 
-	 * @param {Element} bulletpoint 
-	 * @param {Array} code 
-	 */
+	constructor(props) {
+		super(props);
+
+		this.state = {
+			content: null
+		}
+	}
+
 	shuffleContent( paragraphs, bulletpoints, code ) {
 		const shuffle = (a) => {
 			for (let i = a.length - 1; i > 0; i--) {
@@ -191,14 +211,15 @@ class Section extends Component {
 		return content;
 	}
 
-	render() {
-		const { section, index } = this.props;
+	componentDidMount() {
+
+		const { section, index, onVisChange } = this.props;
 		const paragraphs = section.paragraphs.map( (paragraph, i) => (
 			<div key={`sectionContent${i}`}>
 				<p>{paragraph.text}</p>
 			</div>
 		) );
-		const bulletpoints = <ul>
+		const bulletpoints = <ul key="bulletpoints">
 			{ section.bulletpoints.map( (bulletpoint, i) => (
 				<li key={`${section.title.replace(" ", "_")}${i}`}>
 					{bulletpoint.text}
@@ -211,11 +232,20 @@ class Section extends Component {
 			</code>
 		) );
 
+		this.setState( {
+			content: this.shuffleContent( paragraphs, bulletpoints, code)
+		})
+	}
+
+	render() {
+		const { section, index, onVisChange } = this.props;
+		const { content } = this.state;
 
 		return (
 			<section className="main-section" id={section.title.replace('.', '').replace(" ", "_")} key={`p${index}`}>
+				<VisibilitySensor onChange={onVisChange} />
 				<header><h1>{section.title.replace('.', '')}</h1></header>
-				{ this.shuffleContent( paragraphs, bulletpoints, code) }
+				{ content }
 			</section>
 		)
 	}
