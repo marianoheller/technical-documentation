@@ -30,7 +30,7 @@ class App extends Component {
 
 		this.state = {
 			sections: [],
-			visibility: new Array(config.cantSections).fill(false),
+			visibility: (new Array(config.cantSections)).fill(false),
 		}
 	}
 
@@ -99,8 +99,8 @@ class App extends Component {
 				<div className="pure-g" >
 					<div className="pure-u-1-12"></div>
 					<div className="pure-u-10-12">
-						<div className="pure-g">
-							<main id="main-doc"  >
+						<main id="main-doc"  >
+							<div className="pure-g">
 								<div className="pure-u-1-8">
 									<SideBar titles={titles} itemVisible={indexVisible}/>
 								</div>
@@ -114,8 +114,8 @@ class App extends Component {
 										<p>by <a id="github-link" href="https://github.com/marianoheller">Mariano Heller</a></p>
 									</div>
 								</div>
-							</main>
-						</div>
+							</div>
+						</main>
 					</div>
 					<div className="pure-u-1-12"></div>
 				</div>
@@ -213,7 +213,7 @@ class Section extends Component {
 
 	componentDidMount() {
 
-		const { section, index, onVisChange } = this.props;
+		const { section } = this.props;
 		const paragraphs = section.paragraphs.map( (paragraph, i) => (
 			<div key={`sectionContent${i}`}>
 				<p>{paragraph.text}</p>
@@ -243,8 +243,8 @@ class Section extends Component {
 
 		return (
 			<section className="main-section" id={section.title.replace('.', '').replace(" ", "_")} key={`p${index}`}>
-				<VisibilitySensor onChange={onVisChange} />
 				<header><h1>{section.title.replace('.', '')}</h1></header>
+				<VisibilitySensor delayedCall={true} onChange={onVisChange} />
 				{ content }
 			</section>
 		)
