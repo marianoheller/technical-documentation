@@ -18,12 +18,13 @@
 
 .custom-restricted-width {
     /* To limit the menu width to the content of the menu: */
-    /* display: inline-block; */
+     /* display: inline-block;  */
 }
 
 
 #navbar {
-    /* position: fixed; */
+    position: fixed;
+    width: inherit; 
     margin-right: 1rem;
     height: 100%;
     background-color: #34495e;
@@ -35,6 +36,15 @@
     color: white;
 }
 
+#sections-container {
+    padding-left: 1rem;
+}
+
+@media (max-width:767px){
+    .pure-hidden-phone{display:none}
+    .pure-visible-desktop{display:none}
+}
+
 .pure-menu-heading {
     padding-top: 2.5rem;
     font-weight: bold;
@@ -43,6 +53,10 @@
 
 .nav-link {
     color: white;
+
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
 }
 
 .pure-menu-selected {
@@ -53,7 +67,6 @@
 .pure-menu-link {
     color: white !important;
 }
-
 
 .pure-menu-item:hover > a   {
     color: black !important;

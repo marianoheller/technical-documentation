@@ -3,6 +3,7 @@ import loremIpsum from 'lorem-ipsum';
 import VisibilitySensor from 'react-visibility-sensor';
 import config from './config';
 import 'purecss';
+import 'purecss/build/grids-responsive.css';
 import './App.css';
 
 
@@ -50,7 +51,7 @@ class App extends Component {
 				sentenceLowerBound: 1,
 				sentenceUpperBound: 2,
 				format: 'plain'
-			}),
+			}).substr(0,12).trim(),
 			paragraphs: (new Array( randomIntBetween( paragraphs.max, paragraphs.min))).fill(0).map( () => ({
 				text: loremIpsum({
 					count: 1, 
@@ -101,13 +102,15 @@ class App extends Component {
 					<div className="pure-u-10-12">
 						<main id="main-doc"  >
 							<div className="pure-g">
-								<div className="pure-u-1-8">
+								<div className="pure-u-0 pure-u-md-1-8 pure-hidden-phone">
 									<SideBar titles={titles} itemVisible={indexVisible}/>
 								</div>
-								<div className="pure-u-7-8">
-									{ sections.map( (section, i) => 
-										<Section section={section} key={`section${i}`} index={i} onVisChange={this.onVisChangeFactory(i)}/>
-									) }
+								<div className="pure-u-1 pure-u-md-7-8">
+									<div  id="sections-container">
+										{ sections.map( (section, i) => 
+											<Section section={section} key={`section${i}`} index={i} onVisChange={this.onVisChangeFactory(i)}/>
+										) }
+									</div>
 								</div>
 								<div id="footer">
 									<div className="pure-u-1">
